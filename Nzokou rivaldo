@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Imagination Graphic</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f2f2f2;
+		}
+		.container {
+			width: 300px;
+			margin: 50px auto;
+			padding: 20px;
+			background-color: #fff;
+			border: 1px solid #ddd;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+		.container h2 {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+		.formulaire input[type="text"], 
+		.formulaire input[type="password"], 
+		.formulaire input[type="tel"] {
+			width: 100%;
+			height: 40px;
+			margin-bottom: 20px;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+		}
+		.formulaire input[type="submit"] {
+			width: 100%;
+			height: 40px;
+			background-color: #4CAF50;
+			color: #fff;
+			padding: 10px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		.formulaire input[type="submit"]:hover {
+			background-color: #3e8e41;
+		}
+		.conditions {
+			margin-top: 20px;
+			font-size: 14px;
+		}
+		.conditions input[type="checkbox"] {
+			margin-right: 10px;
+		}
+		.buttons {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 20px;
+		}
+		.buttons button {
+			width: 48%;
+			height: 40px;
+			background-color: #007BFF;
+			color: #fff;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		.buttons button:hover {
+			background-color: #0056b3;
+		}
+	</style>
+	<script>
+		function showForm(formId) {
+			document.getElementById("registrationForm").style.display = "none";
+			document.getElementById("loginForm").style.display = "none";
+			document.getElementById(formId).style.display = "block";
+		}
+
+		function handleRegistration(event) {
+			event.preventDefault();
+			const form = event.target;
+			const userPhone = form.telephone.value;
+			const userPassword = form.password.value;
+
+			// Retrieve registered users from localStorage
+			let registeredUsers = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+
+			// Check if the phone number already exists
+			const userExists = registeredUsers.some(user => user.phone === userPhone);
+
+			if (userExists) {
+				alert("Ce numéro de téléphone est déjà inscrit !");
+			} else {
+				// Add new user
+				registeredUsers.push({ phone: userPhone, password: userPassword });
+				localStorage.setItem("registeredUsers", JSON.stringify(registeredUsers));
+
+				alert("Inscription réussie ! Veuillez vous connecter.");
+				showForm("loginForm");
+			}
+		}
+
+		function handleLogin(event) {
+			event.preventDefault();
+			const form = event.target;
+			const inputPhone = form.telephone.value;
+			const inputPassword = form.password.value;
+
+			// Retrieve registered users from localStorage
+			const registeredUsers = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+
+			// Verify credentials
+			const user = registeredUsers.find(user => user.phone === inputPhone && user.password === inputPassword);
+
+			if (user) {
+				alert("Bienvenue sur votre compte !");
+				window.location.href = "welcome.html"; // Redirect to welcome page
+			} else {
+				alert("Numéro de téléphone ou mot de passe incorrect !");
+			}
+		}
+	</script>
+</head>
+<body>
+	<div class="container">
+		<!-- Registration Form -->
+		<div id="registrationForm">
+			<h2>Inscription</h2>
+			<form class="formulaire" onsubmit="handleRegistration(event)">
+				<input type="text" name="nom" placeholder="Nom" required>
+				<input type="text" name="prenom" placeholder="Prénom" required>
+				<input type="tel" name="telephone" placeholder="Numéro de téléphone" required pattern="[0-9]{9}" title="Le numéro de téléphone doit contenir exactement 9 chiffres.">
+				<input type="password" name="password" placeholder="Mot de passe" required pattern=".{4,}" title="Le mot de passe doit contenir au moins 4 caractères.">
+				<input type="submit" value="S'inscrire">
+				<div class="conditions">
+					<input type="checkbox" name="conditions" required>
+					J'accepte les <a href="#" target="_blank">conditions d'utilisation</a> et la <a href="#" target="_blank">politique de confidentialité</a>.
+				</div>
+			</form>
+			<div class="buttons">
+				<button onclick="showForm('loginForm')">Connexion</button>
+				<button onclick="showForm('registrationForm')">Inscription</button>
+			</div>
+		</div>
+
+		<!-- Login Form -->
+		<div id="loginForm" style="display: none;">
+			<h2>Connexion</h2>
+			<form class="formulaire" onsubmit="handleLogin(event)">
+				<input type="tel" name="telephone" placeholder="Numéro de téléphone" required pattern="[0-9]{9}" title="Le numéro de téléphone doit contenir exactement 9 chiffres.">
+				<input type="password" name="password" placeholder="Mot de passe" required pattern=".{4,}" title="Le mot de passe doit contenir au moins 4 caractères.">
+				<input type="submit" value="Se connecter">
+			</form>
+			<div class="buttons">
+				<button onclick="showForm('registrationForm')">Inscription</button>
+				<button onclick="showForm('loginForm')">Connexion</button>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
